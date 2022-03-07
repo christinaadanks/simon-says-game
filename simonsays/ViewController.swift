@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     var colorSequence = [Int]()
     var colorsToTap = [Int]()
     
+    var gameEnd = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +37,13 @@ class ViewController: UIViewController {
         createNewGame()
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameEnd == true {
+            gameEnd = false
+            createNewGame()
+        }
+    }
+    
     func createNewGame() {
         colorSequence.removeAll()
         actionButton.setTitle("start game", for: .normal)
@@ -44,6 +52,24 @@ class ViewController: UIViewController {
             button.alpha = 0.5
             button.isEnabled = false
         }
+        
+        currentPlayer = 0
+        scores = [0,0]
+        playerLbls[currentPlayer].alpha = 1.0
+        playerLbls[1].alpha = 0.75
+        updateScore()
+    }
+    
+    func updateScore() {
+        for (index, label) in scoreLbls.enumerated() {
+            label.text = "\(scores[index])"
+        }
+    }
+    
+    func switchPlayers() {
+        playerLbls[currentPlayer].alpha = 0.75
+        currentPlayer = currentPlayer == 0 ? 1 : 0
+        playerLbls[currentPlayer].alpha = 1.0
     }
     
     func addNewColor() {
@@ -73,8 +99,32 @@ class ViewController: UIViewController {
         }
     }
     
+    func endGame() {
+        let message = currentPlayer == 0 ? "player 2 wins!" : "player 1 wins!"
+        actionButton.setTitle(message, for: .normal)
+        gameEnd = true
+    }
+    
     @IBAction func colorBtnHandle(_ sender: CircularButton) {
-        print("button \(sender.tag) tapped")
+        if sender.tag == colorsToTap.removeFirst() {
+            
+        } else {
+            for button in colorButtons {
+                button.isEnabled = false
+            }
+            endGame()
+            return
+        }
+        if colorsToTap.isEmpty {
+            for button in colorButtons {
+                button.isEnabled = false
+            }
+            scores[currentPlayer] += 1
+            updateScore()
+            switchPlayers()
+            actionButton.setTitle("continue", for: .normal)
+            actionButton.isEnabled = true
+        }
     }
     
     @IBAction func actionBtnHandle(_ sender: UIButton) {

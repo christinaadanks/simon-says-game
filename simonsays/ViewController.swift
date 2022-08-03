@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  simonsays
 //
-//  Created by Christinaa Danks on 3/6/22.
+//  Created by Christina L on 3/6/22.
 //
 
 import UIKit
